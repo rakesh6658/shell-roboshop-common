@@ -4,7 +4,8 @@ check_root_user
 application=payment
 app_setup
 python_setup
-deamon_reload
+systemd_setup
+print_total_time
 
 
 

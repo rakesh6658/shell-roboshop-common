@@ -2,6 +2,7 @@
 source ./common.sh
 check_root_user
 application=cart
-setup_nodejs
 app_setup
-deamon_reload
+setup_nodejs
+systemd_setup
+print_total_time

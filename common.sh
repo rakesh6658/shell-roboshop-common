@@ -38,6 +38,9 @@ validate $? "enabling nodejs"
 
 dnf install nodejs -y &>>$log_file
 validate $? "Installing nodejs"
+npm install &>>$log_file
+validate $? "Installing dependencies"
+
 }
 app_setup(){
 id roboshop
@@ -66,42 +69,8 @@ validate $? "unzipping in /tmp directory"
 
 
 }
-app_setup_maven(){
-    id roboshop
-if [ $? -ne 0 ]
-then
-useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$log_file
-validate $? "Adding user roboshop"
-else
-echo "roboshop user already exists"
-fi
 
-mkdir -p /app &>>$log_file
-validate $? "Creating app directory"
-
-curl -L -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip  &>>$log_file
-validate $? "downloading shipping application"
-
-cd /app &>>$log_file
-validate $? "Changing to app directory"
-
-rm -rf /app/*
-validate $? "Removing existing code"
-
-unzip /tmp/shipping.zip &>>$log_file
-validate $? "unzipping in /tmp directory"
-
-mvn clean package  &>>$log_file
-validate $? "building java application"
-
-mv target/shipping-1.0.jar "$application".jar  &>>$log_file
-validate $? "renaming to "$application".jar"
-
-cp /home/ec2-user/shell-roboshop-common/"$application".service  /etc/systemd/system/"$application".service &>>$log_file
-validate $? "copying "$application".service"
-
-}
-deamon_reload(){
+systemd_setup(){
     
 cp /home/ec2-user/shell-roboshop-common/"$application".service  /etc/systemd/system/"$application".service &>>$log_file
 validate $? "copying "$application".service"
@@ -118,9 +87,15 @@ restarting(){
     systemctl restart "$application"  &>>$log_file
 validate $? "restarting "$application""
 }
-installing_maven(){
+java_setup(){
  dnf install maven -y &>>$log_file
 validate $? "installing maven"
+mvn clean package  &>>$log_file
+validate $? "building java application"
+
+mv target/shipping-1.0.jar "$application".jar  &>>$log_file
+validate $? "renaming to "$application".jar"
+
    
 }
 python_setup(){

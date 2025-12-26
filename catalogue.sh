@@ -3,9 +3,10 @@
 source ./common.sh
 application=catalogue
 check_root_user
-setup_nodejs
 app_setup
-deamon_reload
+setup_nodejs
+
+systemd_setup
 cp /home/ec2-user/shell-roboshop-common/mongo.repo /etc/yum.repos.d/mongo.repo &>>$log_file
 validate $? "copying mongo.repo"
 

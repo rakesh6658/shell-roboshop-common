@@ -2,9 +2,9 @@
 source ./common.sh
 check_root_user
 application=shipping
-installing_maven
-app_setup_maven
-deamon_reload
+app_setup
+java_setup
+systemd_setup
 dnf install mysql -y &>>$log_file
 validate $? "installing mysql client"
 
@@ -17,3 +17,4 @@ validate $? "creating app-user"
 mysql -h mysql.joindevops.store -uroot -pRoboShop@1 < /app/db/master-data.sql &>>$log_file
 validate $? "loading master data"
 restarting
+print_total_time
