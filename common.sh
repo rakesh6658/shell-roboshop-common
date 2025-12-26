@@ -26,6 +26,16 @@ log_file="$LOG_DIR/$script_name.log"
 mkdir -p /var/log/shell-roboshop
 print_total_time(){
     end_time=$(date +%s)
-    total_time = $(($start_time-$end_time))
+    total_time=$(($start_time-$end_time))
     echo "Time taken for executing script is $total_time"
+}
+setup_nodejs(){
+    dnf module disable nodejs -y &>>$log_file
+validate $? "disabling nodejs"
+
+dnf module enable nodejs:20 -y &>>$log_file
+validate $? "enabling nodejs"
+
+dnf install nodejs -y &>>$log_file
+validate $? "Installing nodejs"
 }
