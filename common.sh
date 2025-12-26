@@ -39,3 +39,48 @@ validate $? "enabling nodejs"
 dnf install nodejs -y &>>$log_file
 validate $? "Installing nodejs"
 }
+app_setup(){
+id roboshop
+if [ $? -ne 0 ]
+then
+useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$log_file
+validate $? "Adding user roboshop"
+else
+echo "roboshop user already exists"
+fi
+
+mkdir -p /app &>>$log_file
+validate $? "Creating app directory"
+
+curl -o /tmp/"$application".zip https://roboshop-artifacts.s3.amazonaws.com/"$application"-v3.zip &>>$log_file
+validate $? "downloading "$application" application"
+
+cd /app &>>$log_file
+validate $? "Changing to app directory"
+
+rm -rf /app/*
+validate $? "Removing existing code"
+
+unzip /tmp/"$application".zip &>>$log_file
+validate $? "unzipping in /tmp directory"
+
+npm install &>>$log_file
+validate $? "Installing dependencies"
+
+cp /home/ec2-user/shell-roboshop-common/"$application".service  /etc/systemd/system/"$application".service &>>$log_file
+validate $? "copying "$application".service"
+}
+deamon_reload(){
+    systemctl daemon-reload &>>$log_file
+validate $? "deamon reload"
+
+systemctl enable "$application"  &>>$log_file
+validate $? "enabling "$application""
+
+systemctl start "$application"  &>>$log_file
+validate $? "starting "$application""
+}
+restarting(){
+    systemctl restart "$application"  &>>$log_file
+validate $? "restarting "$application""
+}
