@@ -3,7 +3,7 @@ source ./common.sh
 check_root_user
 application=shipping
 installing_maven
-app_setup
+app_setup_maven
 deamon_reload
 dnf install mysql -y &>>$log_file
 validate $? "installing mysql client"

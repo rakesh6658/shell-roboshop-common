@@ -70,6 +70,41 @@ validate $? "Installing dependencies"
 cp /home/ec2-user/shell-roboshop-common/"$application".service  /etc/systemd/system/"$application".service &>>$log_file
 validate $? "copying "$application".service"
 }
+app_setup_maven(){
+    id roboshop
+if [ $? -ne 0 ]
+then
+useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$log_file
+validate $? "Adding user roboshop"
+else
+echo "roboshop user already exists"
+fi
+
+mkdir -p /app &>>$log_file
+validate $? "Creating app directory"
+
+curl -L -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip  &>>$log_file
+validate $? "downloading shipping application"
+
+cd /app &>>$log_file
+validate $? "Changing to app directory"
+
+rm -rf /app/*
+validate $? "Removing existing code"
+
+unzip /tmp/shipping.zip &>>$log_file
+validate $? "unzipping in /tmp directory"
+
+mvn clean package  &>>$log_file
+validate $? "building java application"
+
+mv target/shipping-1.0.jar "$application".jar  &>>$log_file
+validate $? "renaming to "$application".jar"
+
+cp /home/ec2-user/shell-roboshop-common/"$application".service  /etc/systemd/system/"$application".service &>>$log_file
+validate $? "copying "$application".service"
+
+}
 deamon_reload(){
     systemctl daemon-reload &>>$log_file
 validate $? "deamon reload"
