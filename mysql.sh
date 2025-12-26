@@ -1,4 +1,5 @@
 #!/bin/bash
+source ./common.sh
 check_root_user
 dnf install mysql-server -y &>>$log_file
 validate $? "installing mysql"
