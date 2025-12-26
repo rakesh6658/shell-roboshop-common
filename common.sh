@@ -64,11 +64,7 @@ validate $? "Removing existing code"
 unzip /tmp/"$application".zip &>>$log_file
 validate $? "unzipping in /tmp directory"
 
-npm install &>>$log_file
-validate $? "Installing dependencies"
 
-cp /home/ec2-user/shell-roboshop-common/"$application".service  /etc/systemd/system/"$application".service &>>$log_file
-validate $? "copying "$application".service"
 }
 app_setup_maven(){
     id roboshop
@@ -106,6 +102,9 @@ validate $? "copying "$application".service"
 
 }
 deamon_reload(){
+    
+cp /home/ec2-user/shell-roboshop-common/"$application".service  /etc/systemd/system/"$application".service &>>$log_file
+validate $? "copying "$application".service"
     systemctl daemon-reload &>>$log_file
 validate $? "deamon reload"
 
@@ -123,4 +122,10 @@ installing_maven(){
  dnf install maven -y &>>$log_file
 validate $? "installing maven"
    
+}
+python_setup(){
+dnf install python3 gcc python3-devel -y &>>$log_file
+validate $? "installing python"
+pip3 install -r requirements.txt &>>$log_file
+validate $? "Installing dependencies"
 }
