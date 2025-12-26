@@ -84,3 +84,8 @@ restarting(){
     systemctl restart "$application"  &>>$log_file
 validate $? "restarting "$application""
 }
+installing_maven(){
+ dnf install maven -y &>>$log_file
+validate $? "installing maven"
+   
+}
